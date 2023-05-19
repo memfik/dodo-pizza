@@ -12,7 +12,7 @@ function Categories() {
           return (
             <li
               onClick={() => onClickCategory(index)}
-              key={categorie}
+              key={index}
               className={activeCategory === index ? 'active' : ''}>
               {categorie}
             </li>
