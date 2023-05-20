@@ -16,9 +16,10 @@ export const Main = () => {
         setItems(pizzas);
         setIsLoading(false);
       });
+    // window.scrollTo(0, 0); скрол вверх
   }, []);
   return (
-    <>
+    <div className="container">
       <div className="content__top">
         <Categories />
         <Sort />
@@ -29,6 +30,6 @@ export const Main = () => {
           ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
           : items.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />)}
       </div>
-    </>
+    </div>
   );
 };
