@@ -8,25 +8,13 @@ import { NotFound } from './pages/NotFound';
 import { Cart } from './pages/Cart';
 
 function App() {
-  const [items, setItems] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  React.useEffect(() => {
-    fetch('https://646778a6ba7110b663b9cda8.mockapi.io/pizzas')
-      .then((res) => {
-        return res.json();
-      })
-      .then((pizzas) => {
-        setItems(pizzas);
-        setIsLoading(false);
-      });
-  }, []);
-
+  const [searchValue, setSearchValue] = React.useState('');
   return (
     <div className="wrapper">
-      <Header />
+      <Header searchValue={searchValue} setSearchValue={setSearchValue} />
       <div className="content">
         <Routes>
-          <Route path="/" element={<Main />} />
+          <Route path="/" element={<Main searchValue={searchValue} />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

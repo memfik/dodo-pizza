@@ -1,0 +1,23 @@
+.root{
+    border:1px solid black;
+    padding: 8px 15px;
+    width: 300px;
+    border-radius: 20px;
+    font-size: 16px;
+    transition: all 0.15s ease-in-out;
+    &:focus{
+        border:1px solid rgb(240, 142, 14);
+        
+    }
+
+}
+.clear{
+    width: 40px;
+    height: 40px;
+    border-radius: 40%;
+    margin-left: 10px;
+    background-color: #f1a044;
+    &:focus{
+        cursor: pointer;
+    }
+}
