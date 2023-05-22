@@ -5,7 +5,9 @@ import Sort from '../components/Sort';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import PizzaBlock from '../components/PizzaBlock';
 import { Pagination } from '../components/Pagination';
-export const Main = ({ searchValue }) => {
+import { SearchContext } from '../App';
+export const Main = () => {
+  const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [activeSort, setActiveSort] = React.useState({
@@ -22,7 +24,7 @@ export const Main = ({ searchValue }) => {
     setIsLoading(true);
     const order = activeSort.sortProperty.includes('-') ? 'asc' : 'desc';
     fetch(
-      `https://646778a6ba7110b663b9cda8.mockapi.io/pizzas?page=1&limit=8${category}&sortBy=${sortBy}&order=${order}${search}`,
+      `https://646778a6ba7110b663b9cda8.mockapi.io/pizzas?page=${currentPage}&limit=8${category}&sortBy=${sortBy}&order=${order}${search}`,
     )
       .then((res) => {
         return res.json();
