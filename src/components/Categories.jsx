@@ -1,6 +1,12 @@
 import React from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { decrement, increment } from '../redux/slices/filterSlice';
+
 function Categories({ value, onClickCategory }) {
   const categories = ['Все', , 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+  // const count = useSelector((state) => state.filter.value);
+  // const dispatch = useDispatch();
+
   return (
     <div className="categories">
       <ul>
