@@ -1,23 +1,31 @@
 import React from 'react';
-
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import PizzaBlock from '../components/PizzaBlock';
 import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCategoryId } from '../redux/slices/filterSlice';
 export const Main = () => {
+  const dispatch = useDispatch();
+  const { categoryId, sort } = useSelector((state) => state.filter);
+  const activeSort = sort;
+  const onClickCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
+
   const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [activeSort, setActiveSort] = React.useState({
-    name: 'популярности (убыванию)',
-    sortProperty: 'rating',
-  });
-  const [activeCategory, setActiveCategory] = React.useState(0);
+
+  // const [activeSort, setActiveSort] = React.useState({
+  //   name: 'популярности (убыванию)',
+  //   sortProperty: 'rating',
+  // });
   const [currentPage, setCurrentPage] = React.useState(1);
   const sortBy = activeSort.sortProperty.replace('-', '');
-  const category = activeCategory > 0 ? `&category=${activeCategory}` : '';
+  const category = categoryId > 0 ? `&category=${categoryId}` : '';
   const search = searchValue ? `&search=${searchValue}` : '';
 
   React.useEffect(() => {
@@ -34,14 +42,14 @@ export const Main = () => {
         setIsLoading(false);
       });
     // window.scrollTo(0, 0); скрол вверх
-  }, [activeCategory, activeSort, searchValue, currentPage]);
+  }, [categoryId, activeSort, searchValue, currentPage]);
 
   const pizzaItems = items.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />);
   return (
     <div className="container">
       <div className="content__top">
-        <Categories value={activeCategory} onClickCategory={(index) => setActiveCategory(index)} />
-        <Sort value={activeSort} onClickSort={(index) => setActiveSort(index)} />
+        <Categories value={categoryId} onClickCategory={onClickCategory} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">

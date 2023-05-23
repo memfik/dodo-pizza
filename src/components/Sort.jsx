@@ -1,17 +1,21 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSort } from '../redux/slices/filterSlice';
 
-function Sort({ value, onClickSort }) {
-  const sortList = [
-    { name: 'популярности (убыванию)', sortProperty: 'rating' },
-    { name: 'популярности (возрастанию)', sortProperty: '-rating' },
-    { name: 'цене (убыванию)', sortProperty: 'price' },
-    { name: 'цене (возрастанию)', sortProperty: '-price' },
-    { name: 'алфавиту (убыванию)', sortProperty: 'title' },
-    { name: 'алфавиту (возрастанию)', sortProperty: '-title' },
-  ];
+const sortList = [
+  { name: 'популярности (убыванию)', sortProperty: 'rating' },
+  { name: 'популярности (возрастанию)', sortProperty: '-rating' },
+  { name: 'цене (убыванию)', sortProperty: 'price' },
+  { name: 'цене (возрастанию)', sortProperty: '-price' },
+  { name: 'алфавиту (убыванию)', sortProperty: 'title' },
+  { name: 'алфавиту (возрастанию)', sortProperty: '-title' },
+];
+function Sort() {
+  const dispatch = useDispatch();
+  const sort = useSelector((state) => state.filter.sort);
   const [isVisible, setIsVisible] = React.useState(false);
-  const onChangeSort = (i) => {
-    onClickSort(i);
+  const onChangeSort = (obj) => {
+    dispatch(setSort(obj));
     setIsVisible(false);
   };
   return (
@@ -29,7 +33,7 @@ function Sort({ value, onClickSort }) {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setIsVisible(!isVisible)}>{value.name}</span>
+        <span onClick={() => setIsVisible(!isVisible)}>{sort.name}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
@@ -39,7 +43,7 @@ function Sort({ value, onClickSort }) {
                 <li
                   onClick={() => onChangeSort(sortCategorie)}
                   key={index}
-                  className={value.sortProperty === sortCategorie.sortProperty ? 'active' : ''}>
+                  className={sort.sortProperty === sortCategorie.sortProperty ? 'active' : ''}>
                   {sortCategorie.name}
                 </li>
               );
