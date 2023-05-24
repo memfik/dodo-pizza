@@ -1,15 +1,21 @@
 import React from 'react';
 import Categories from '../components/Categories';
-import Sort from '../components/Sort';
+import Sort, { sortList } from '../components/Sort';
 import Skeleton from '../components/PizzaBlock/Skeleton';
+import queryString from 'qs';
 import PizzaBlock from '../components/PizzaBlock';
 import axios from 'axios';
 import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setCurrentPage } from '../redux/slices/filterSlice';
+import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import { useNavigate } from 'react-router-dom';
+
 export const Main = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSearch = React.useRef(false);
+  const isMounted = React.useRef(false);
   const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
   const activeSort = sort;
   const onClickCategory = (id) => {
@@ -22,15 +28,11 @@ export const Main = () => {
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // const [activeSort, setActiveSort] = React.useState({
-  //   name: 'популярности (убыванию)',
-  //   sortProperty: 'rating',
-  // });
-  const sortBy = activeSort.sortProperty.replace('-', '');
-  const category = categoryId > 0 ? `&category=${categoryId}` : '';
-  const search = searchValue ? `&search=${searchValue}` : '';
-  const order = activeSort.sortProperty.includes('-') ? 'asc' : 'desc';
-  React.useEffect(() => {
+  const fetchPizzas = () => {
+    const sortBy = activeSort.sortProperty.replace('-', '');
+    const category = categoryId > 0 ? `&category=${categoryId}` : '';
+    const search = searchValue ? `&search=${searchValue}` : '';
+    const order = activeSort.sortProperty.includes('-') ? 'asc' : 'desc';
     setIsLoading(true);
     axios
       .get(
@@ -40,7 +42,40 @@ export const Main = () => {
         setItems(response.data);
         setIsLoading(false);
       });
+  };
+
+  // const [activeSort, setActiveSort] = React.useState({
+  //   name: 'популярности (убыванию)',
+  //   sortProperty: 'rating',
+  // });
+
+  React.useEffect(() => {
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
     // window.scrollTo(0, 0); скрол вверх
+  }, [categoryId, activeSort, searchValue, currentPage]);
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = queryString.parse(window.location.search.substring(1));
+      const sort = sortList.find((obj) => obj.sortProperty === params.sortProperty);
+      dispatch(setFilters({ ...params, sort }));
+      console.log(dispatch(setFilters({ ...params, sort })));
+      console.log(params);
+      isSearch.current = true;
+    }
+  }, []);
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const QueryString = queryString.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
+      navigate(`?${QueryString}`);
+    }
+    isMounted.current = true;
   }, [categoryId, activeSort, searchValue, currentPage]);
 
   const pizzaItems = items.map((pizza) => <PizzaBlock key={pizza.id} {...pizza} />);

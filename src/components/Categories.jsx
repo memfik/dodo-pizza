@@ -3,7 +3,7 @@ import React from 'react';
 // import { decrement, increment } from '../redux/slices/filterSlice';
 
 function Categories({ value, onClickCategory }) {
-  const categories = ['Все', , 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые'];
+  const categories = ['Все', , 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Микс'];
   // const count = useSelector((state) => state.filter.value);
   // const dispatch = useDispatch();
 

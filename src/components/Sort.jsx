@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSort } from '../redux/slices/filterSlice';
+import { click } from '@testing-library/user-event/dist/click';
 
-const sortList = [
+export const sortList = [
   { name: 'популярности (убыванию)', sortProperty: 'rating' },
   { name: 'популярности (возрастанию)', sortProperty: '-rating' },
   { name: 'цене (убыванию)', sortProperty: 'price' },
@@ -18,8 +19,17 @@ function Sort() {
     dispatch(setSort(obj));
     setIsVisible(false);
   };
+  const sortRef = React.useRef();
+  React.useEffect(() => {
+    document.body.addEventListener('click', (event) => {
+      if (event.composedPath().includes(sortRef.current)) {
+        console.log('был клик насорт');
+      }
+    });
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
