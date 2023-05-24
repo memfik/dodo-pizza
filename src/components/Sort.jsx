@@ -21,11 +21,15 @@ function Sort() {
   };
   const sortRef = React.useRef();
   React.useEffect(() => {
-    document.body.addEventListener('click', (event) => {
-      if (event.composedPath().includes(sortRef.current)) {
-        console.log('был клик насорт');
+    const handleClickOutside = (event) => {
+      if (!event.composedPath().includes(sortRef.current)) {
+        setIsVisible(false);
       }
-    });
+    };
+    document.body.addEventListener('click', handleClickOutside);
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   return (
