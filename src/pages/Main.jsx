@@ -4,12 +4,13 @@ import Sort, { sortList } from '../components/Sort';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import queryString from 'qs';
 import PizzaBlock from '../components/PizzaBlock';
-import axios from 'axios';
 import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import { useNavigate } from 'react-router-dom';
+import { setItems } from '../redux/slices/pizzaSlice';
+import axios from 'axios';
 
 export const Main = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const Main = () => {
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
   const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
+  const { items } = useSelector((state) => state.pizza);
   const activeSort = sort;
   const onClickCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -25,29 +27,26 @@ export const Main = () => {
     dispatch(setCurrentPage(number));
   };
   const { searchValue } = React.useContext(SearchContext);
-  const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const fetchPizzas = () => {
+  const fetchPizzas = async () => {
     const sortBy = activeSort.sortProperty.replace('-', '');
     const category = categoryId > 0 ? `&category=${categoryId}` : '';
     const search = searchValue ? `&search=${searchValue}` : '';
     const order = activeSort.sortProperty.includes('-') ? 'asc' : 'desc';
     setIsLoading(true);
-    axios
-      .get(
-        `https://646778a6ba7110b663b9cda8.mockapi.io/pizzas?page=${currentPage}&limit=8${category}&sortBy=${sortBy}&order=${order}${search}`,
-      )
-      .then((response) => {
-        setItems(response.data);
-        setIsLoading(false);
-      });
-  };
 
-  // const [activeSort, setActiveSort] = React.useState({
-  //   name: 'популярности (убыванию)',
-  //   sortProperty: 'rating',
-  // });
+    try {
+      const { data } = await axios.get(
+        `https://646778a6ba7110b663b9cda8.mockapi.io/pizzas?page=${currentPage}&limit=8${category}&sortBy=${sortBy}&order=${order}${search}`,
+      );
+      dispatch(setItems(data));
+    } catch (error) {
+      console.log('ERROR', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   React.useEffect(() => {
     if (!isSearch.current) {
